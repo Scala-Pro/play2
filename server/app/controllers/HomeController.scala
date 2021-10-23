@@ -13,11 +13,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                val configuration: Configuration,
                                implicit val webJarsUtil: WebJarsUtil,
                                indexTemplate: index,
+                               surojiddinTemplate: surojiddin,
                                testTemplate: test)
                               (implicit val ec: ExecutionContext)
   extends BaseController {
 
   def index: Action[AnyContent] = Action(Ok(indexTemplate()))
+  def surojiddin: Action[AnyContent] = Action(Ok(surojiddinTemplate()))
   def test: Action[AnyContent] = Action(Ok(testTemplate()))
 
 }
