@@ -12,10 +12,12 @@ import scala.concurrent.ExecutionContext
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                val configuration: Configuration,
                                implicit val webJarsUtil: WebJarsUtil,
-                               indexTemplate: index)
+                               indexTemplate: index,
+                               testTemplate: test)
                               (implicit val ec: ExecutionContext)
   extends BaseController {
 
   def index: Action[AnyContent] = Action(Ok(indexTemplate()))
+  def test: Action[AnyContent] = Action(Ok(testTemplate()))
 
 }

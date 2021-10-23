@@ -1,6 +1,18 @@
 @this(webJarsUtil: org.webjars.play.WebJarsUtil)
 @()
 @main("Home Page", webJarsUtil) {
-  <div id="app"></div>
-  <script src=@routes.Assets.versioned("client-fastopt-bundle.js")></script>
+<br>
+<div class="row">
+    <div class="offset-3 col-6 bg-white" style="border-radius: 10px">
+        <div class="row">
+            <div class="col-3">
+                <img src="@routes.Assets.versioned("images/scala.png")" width="100px" alt="">
+            </div>
+            <div class="col-7">
+                <div id="app"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src=@routes.Assets.versioned("client-fastopt-bundle.js")></script>
 }
