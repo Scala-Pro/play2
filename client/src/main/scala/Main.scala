@@ -4,11 +4,12 @@ import japgolly.scalajs.react.component.Scala.BackendScope
 import japgolly.scalajs.react.facade.SyntheticFormEvent
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.{console, document}
-import org.scalajs.dom.html.Div
+import org.scalajs.dom.html.{Button, Div}
 import org.scalajs.dom.raw.HTMLInputElement
+import Protocol._
 
-object Main extends App {
- case class State(login: String = "", password: String = "", succeed: Boolean = false)
+object Main extends App with AjaxImplicits {
+ case class State(login: String = "", password: String = "", succeed: Boolean = false, users: List[User] = Nil)
 
   class Backend($: BackendScope[Unit, State]) {
 
@@ -55,8 +56,19 @@ object Main extends App {
         )
       )
 
+    def getAllUsers: Callback =
+      get("/user/get")
+        .fail(onError)
+        .done[List[User]] { users =>
+          println(users)
+          $.modState(_.copy(users = users))
+        }.asCallback
+
+    def userButton(implicit state: State): VdomTagOf[Button] =
+      <.button(^.cls := "btn btn-primary btn-md", ^.onClick --> getAllUsers)("Get Users")
+
     def render(implicit state: State): VdomTagOf[Div] =
-      <.div(^.cls := "container")(loginForm)
+      <.div(userButton)
   }
 
   val AppComponent =
