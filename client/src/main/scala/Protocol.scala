@@ -12,6 +12,13 @@ object Protocol {
 		implicit val encoderUser: Encoder[User] = deriveEncoder[User]
 	}
 
+	case class Course(name: String, number_of_student: Int, price: Double, status: String)
+
+	object Course {
+		implicit val decoderUser: Decoder[Course] = deriveDecoder[Course]
+		implicit val encoderUser: Encoder[Course] = deriveEncoder[Course]
+	}
+
 	val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
 
 	def toJsonString[T: Encoder](t: T): String = t.asJson.printWith(printer)

@@ -9,7 +9,7 @@ import org.scalajs.dom.raw.HTMLInputElement
 import Protocol._
 
 object Main extends App with AjaxImplicits {
- case class State(login: String = "", password: String = "", succeed: Boolean = false, users: List[User] = Nil)
+ case class State(login: String = "", password: String = "", succeed: Boolean = false, users: List[User] = Nil, courses: List[Course] = Nil)
 
   class Backend($: BackendScope[Unit, State]) {
 
@@ -57,14 +57,26 @@ object Main extends App with AjaxImplicits {
       )
 
     def getAllUsers: Callback =
+      $.modState(_.copy(courses = Nil)) >>
       get(Urls.GetUser)
         .fail(onError)
         .done[List[User]] { users =>
           $.modState(_.copy(users = users))
         }.asCallback
 
+    def getAllCourses: Callback =
+      $.modState(_.copy(users = Nil)) >>
+      get(Urls.GetCourses)
+        .fail(onError)
+        .done[List[Course]] { courses =>
+          $.modState(_.copy(courses = courses))
+        }.asCallback
+
     def userButton(implicit state: State): VdomTagOf[Button] =
       <.button(^.cls := "btn btn-primary btn-md", ^.onClick --> getAllUsers)("Get Users")
+
+    def courseButton(implicit state: State): VdomTagOf[Button] =
+      <.button(^.cls := "btn btn-success btn-md", ^.onClick --> getAllCourses)("Get Courses")
 
     def createRow(user: User): VdomTagOf[TableRow] =
       <.tr(
@@ -75,13 +87,26 @@ object Main extends App with AjaxImplicits {
         <.td(user.age)
       )
 
+    def createCourseRow(course: Course): VdomTagOf[TableRow] =
+      <.tr(
+        <.td(course.name),
+        <.td(course.number_of_student),
+        <.td(course.price),
+        <.td(course.status)
+      )
+
     def userTable(implicit state: State): TagMod =
       <.table(^.cls := "table table-bordered table-striped mt-5")(
         <.thead(<.tr(<.th("First Name"), <.th("Last Name"), <.th("Email"), <.th("Phone"), <.th("Age"))),
-        <.tbody(state.users map createRow: _*)).when(state.users.nonEmpty)
+        <.tbody(state.users map createRow: _*)).when(state.users.nonEmpty && state.courses.isEmpty)
+
+    def courseTable(implicit state: State): TagMod =
+      <.table(^.cls := "table table-bordered table-striped mt-5")(
+        <.thead(<.tr(<.th("Name"), <.th("Number of students"), <.th("Price"), <.th("Status"))),
+        <.tbody(state.courses map createCourseRow: _*)).when(state.courses.nonEmpty && state.users.isEmpty)
 
     def render(implicit state: State): VdomTagOf[Div] =
-      <.div(userButton, userTable)
+      <.div(userButton, courseButton, userTable, courseTable)
   }
 
   val AppComponent =
