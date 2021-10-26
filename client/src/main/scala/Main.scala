@@ -77,7 +77,7 @@ object Main extends App with AjaxImplicits {
 
     def userTable(implicit state: State): TagMod =
       <.table(^.cls := "table table-bordered table-striped mt-5")(
-        <.thead(<.tr(<.th(state.users.map(_.firstname).headOption), <.th("Last Name"), <.th("Email"), <.th("Phone"), <.th("Age"))),
+        <.thead(<.tr(<.th("First Name"), <.th("Last Name"), <.th("Email"), <.th("Phone"), <.th("Age"))),
         <.tbody(state.users map createRow: _*)).when(state.users.nonEmpty)
 
     def render(implicit state: State): VdomTagOf[Div] =
