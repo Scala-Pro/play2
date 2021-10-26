@@ -2,10 +2,8 @@ package controllers
 
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
-import play.api.http.Writeable
-import play.api.libs.json
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Result}
+import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import views.html._
 import views.html.user.user
 
@@ -22,21 +20,9 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                userTemplate: user
                               )
                               (implicit val ec: ExecutionContext)
-  extends BaseController {
-
-  def index: Action[AnyContent] = Action(Ok(indexTemplate()))
-  def surojiddin: Action[AnyContent] = Action(Ok(surojiddinTemplate()))
-  def test: Action[AnyContent] = Action(Ok(testTemplate()))
-  def userPage: Action[AnyContent] = Action(Ok(userTemplate()))
+    extends BaseController {
 
   case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
-  implicit val userFormat = Json.format[User]
-
-//  object User {
-//    implicit val decoderUser: Decoder[User] = deriveDecoder[User]
-//    implicit val encoderUser: Encoder[User] = deriveEncoder[User]
-//  }
-
 
   val userList = List(
     User("Akmal", "Burxonov", "akmal12@gmail.com", "+998998877412", 24),
@@ -48,9 +34,18 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
     User("Martin", "Odersky", "martin@gmail.com", "+998986785677", 28)
   )
 
+  def index: Action[AnyContent] = Action(Ok(indexTemplate()))
 
-  def getUsers: Result =
-    Ok(json.Json.toJson(userList))
+  def surojiddin: Action[AnyContent] = Action(Ok(surojiddinTemplate()))
 
+  def test: Action[AnyContent] = Action(Ok(testTemplate()))
 
+  def userPage: Action[AnyContent] = Action(Ok(userTemplate()))
+
+  implicit val userFormat: OFormat[User] = Json.format[User]
+
+  def getUsers: Action[AnyContent] = Action { implicit request => {
+    Ok(Json.toJson(userList))
+  }
+  }
 }

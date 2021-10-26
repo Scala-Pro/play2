@@ -24,7 +24,7 @@ trait AjaxImplicits {
 
   implicit class Step2Ops(val step2: Step2) {
     def isSuccessFull: XMLHttpRequest => Boolean = xhr =>
-      xhr.status == 200 && xhr.getResponseHeader("Content-Type") == "application/json;charset=UTF-8"
+      xhr.status == 200 && xhr.getResponseHeader("Content-Type") == "application/json"
 
     final def fail(onFailure: AjaxException => Callback): Step2 =
       step2.onComplete(xhr => Callback.unless(isSuccessFull(xhr))(onFailure(AjaxException(xhr))))
