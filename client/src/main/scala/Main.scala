@@ -52,6 +52,7 @@ object Main extends App {
         ).when(state.succeed),
         <.div(^.cls := "col-6 offset-3")(
           "Length of data: " + state.login.length
+
         )
       )
 
