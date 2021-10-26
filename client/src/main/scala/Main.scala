@@ -4,11 +4,12 @@ import japgolly.scalajs.react.component.Scala.BackendScope
 import japgolly.scalajs.react.facade.SyntheticFormEvent
 import japgolly.scalajs.react.vdom.html_<^._
 import org.scalajs.dom.{console, document}
-import org.scalajs.dom.html.Div
+import org.scalajs.dom.html.{Button, Div, TableRow}
 import org.scalajs.dom.raw.HTMLInputElement
+import Protocol._
 
-object Main extends App {
- case class State(login: String = "", password: String = "", succeed: Boolean = false)
+object Main extends App with AjaxImplicits {
+ case class State(login: String = "", password: String = "", succeed: Boolean = false, users: List[User] = Nil)
 
   class Backend($: BackendScope[Unit, State]) {
 
@@ -56,8 +57,32 @@ object Main extends App {
         )
       )
 
+    def getAllUsers: Callback =
+      get(Urls.GetUser)
+        .fail(onError)
+        .done[List[User]] { users =>
+          $.modState(_.copy(users = users))
+        }.asCallback
+
+    def userButton(implicit state: State): VdomTagOf[Button] =
+      <.button(^.cls := "btn btn-primary btn-md", ^.onClick --> getAllUsers)("Get Users")
+
+    def createRow(user: User): VdomTagOf[TableRow] =
+      <.tr(
+        <.td(user.firstname),
+        <.td(user.lastname),
+        <.td(user.email),
+        <.td(user.phone),
+        <.td(user.age)
+      )
+
+    def userTable(implicit state: State): TagMod =
+      <.table(^.cls := "table table-bordered table-striped mt-5")(
+        <.thead(<.tr(<.th("First Name"), <.th("Last Name"), <.th("Email"), <.th("Phone"), <.th("Age"))),
+        <.tbody(state.users map createRow: _*)).when(state.users.nonEmpty)
+
     def render(implicit state: State): VdomTagOf[Div] =
-      <.div(^.cls := "container")(loginForm)
+      <.div(userButton, userTable)
   }
 
   val AppComponent =
