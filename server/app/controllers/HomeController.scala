@@ -24,7 +24,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
   case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
 
-  val userList = List(
+  val userList: List[User] = List(
     User("Akmal", "Burxonov", "akmal12@gmail.com", "+998998877412", 24),
     User("Sardor", "Jamshidov", "sardor@inbox.ru", "+998905674545", 22),
     User("Mack", "Daniel", "mack@gmail.com", "+998932344355", 19),
