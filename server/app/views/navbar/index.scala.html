@@ -1,0 +1,6 @@
+@this(webJarsUtil: org.webjars.play.WebJarsUtil)
+@()
+@navbar.main("Navbar Example", webJarsUtil) {
+<div id="navbar-app"></div>
+<script src=@routes.Assets.versioned("client-fastopt-bundle.js")></script>
+}

@@ -17,7 +17,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                indexTemplate: index,
                                surojiddinTemplate: surojiddin,
                                testTemplate: test,
-                               userTemplate: user
+                               userTemplate: user,
+                               navbarTemp: views.html.navbar.index
                               )
                               (implicit val ec: ExecutionContext)
     extends BaseController {
@@ -41,6 +42,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   def test: Action[AnyContent] = Action(Ok(testTemplate()))
 
   def userPage: Action[AnyContent] = Action(Ok(userTemplate()))
+  def navbar: Action[AnyContent] = Action(Ok(navbarTemp()))
 
   implicit val userFormat: OFormat[User] = Json.format[User]
 
