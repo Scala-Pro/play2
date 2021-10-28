@@ -22,6 +22,21 @@ class Navbar {
     page: Page = Home
   )
 
+  /*
+  ////////// First
+  sealed trait Owner
+  case object Me extends Owner
+  case object You extends Owner
+
+  case class Message(text: String, owner: Owner)
+  */
+/*
+  //// Second
+  def onSend(implicit state: State): Callback =
+    $.modState(_.copy(messages = state.messages :+ Message(state.text, Me)))
+    */
+
+
   class Backend($: BackendScope[Unit, State]) {
 
     def changePage(selectedPage: Page): Callback =
