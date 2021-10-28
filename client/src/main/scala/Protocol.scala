@@ -12,6 +12,11 @@ object Protocol {
 		implicit val encoderUser: Encoder[User] = deriveEncoder[User]
 	}
 
+	sealed trait Page
+	case object Home extends Page
+	case object CreateUser extends Page
+	case object UserDashboard extends Page
+
 	val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
 
 	def toJsonString[T: Encoder](t: T): String = t.asJson.printWith(printer)

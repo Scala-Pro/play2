@@ -7,7 +7,7 @@ import org.scalajs.dom.html.Div
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("User")
-class User extends AjaxImplicits {
+class UserApp extends AjaxImplicits {
 
   type AppComponentType = Component[Unit, State, Backend, CtorType.Nullary]
 
