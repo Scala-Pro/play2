@@ -1,0 +1,6 @@
+@this(webJarsUtil: org.webjars.play.WebJarsUtil)
+@()
+@chatD.main("Home Page", webJarsUtil) {
+<div id="chatD"></div>
+<script src=@routes.Assets.versioned("client-fastopt-bundle.js")></script>
+}

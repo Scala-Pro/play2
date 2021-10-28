@@ -5,5 +5,6 @@ object Main extends App {
     case "index" => new Example()
     case "user" => new UserApp()
     case "navbar" => new Navbar()
+    case "chatD" => new ChatD()
   }
 }
