@@ -11,21 +11,22 @@ import javax.inject._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class HomeController @Inject() (
-  val controllerComponents: ControllerComponents,
-  val configuration: Configuration,
-  implicit val webJarsUtil: WebJarsUtil,
-  indexTemplate: index,
-  surojiddinTemplate: surojiddin,
-  testTemplate: test,
-  userTemplate: user
-)(implicit val ec: ExecutionContext)
+class HomeController @Inject()(val controllerComponents: ControllerComponents,
+                               val configuration: Configuration,
+                               implicit val webJarsUtil: WebJarsUtil,
+                               indexTemplate: index,
+                               surojiddinTemplate: surojiddin,
+                               testTemplate: test,
+                               userTemplate: user,
+                               navbarTemp: views.html.navbar.index
+                              )
+                              (implicit val ec: ExecutionContext)
     extends BaseController {
 
   case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
   case class Course(name: String, number_of_student: Int, price: Double, status: String)
 
-  val userList   = List(
+  val userList: List[User] = List(
     User("Akmal", "Burxonov", "akmal12@gmail.com", "+998998877412", 24),
     User("Sardor", "Jamshidov", "sardor@inbox.ru", "+998905674545", 22),
     User("Mack", "Daniel", "mack@gmail.com", "+998932344355", 19),
@@ -47,6 +48,7 @@ class HomeController @Inject() (
   def test: Action[AnyContent] = Action(Ok(testTemplate()))
 
   def userPage: Action[AnyContent] = Action(Ok(userTemplate()))
+  def navbar: Action[AnyContent] = Action(Ok(navbarTemp()))
 
   implicit val userFormat: OFormat[User] = Json.format[User]
 
