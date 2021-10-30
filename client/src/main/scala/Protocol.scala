@@ -16,6 +16,7 @@ object Protocol {
 	case object Home extends Page
 	case object CreateUser extends Page
 	case object UserDashboard extends Page
+	case object ChatUI extends Page
 
 	val printer: Printer = Printer.noSpaces.copy(dropNullValues = true)
 
