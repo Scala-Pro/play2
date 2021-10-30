@@ -14,8 +14,8 @@ object Protocol {
   }
 
   object Prize {
-    implicit val decoderUser: Decoder[Prize] = deriveDecoder[Prize]
-    implicit val encoderUser: Encoder[Prize] = deriveEncoder[Prize]
+    implicit val decoderPrize: Decoder[Prize] = deriveDecoder[Prize]
+    implicit val encoderPrize: Encoder[Prize] = deriveEncoder[Prize]
   }
 
 	sealed trait Page

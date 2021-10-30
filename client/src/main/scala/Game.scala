@@ -1,11 +1,9 @@
 import Protocol._
 import japgolly.scalajs.react.component.Scala.{BackendScope, Component}
-import japgolly.scalajs.react.facade.SyntheticFormEvent
 import japgolly.scalajs.react.vdom.html_<^._
 import japgolly.scalajs.react.{Callback, CtorType, ScalaComponent}
 import org.scalajs.dom.document
-import org.scalajs.dom.html.{Button, Div, TableRow}
-import org.scalajs.dom.raw.HTMLInputElement
+import org.scalajs.dom.html.{Button, Div}
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 
@@ -18,7 +16,7 @@ class Game extends AjaxImplicits {
   class Backend($: BackendScope[Unit, State]) {
 
     def getAllPrize: Callback =
-      get(Urls.GetUser)
+      get(Urls.GetPrize)
         .fail(onError)
         .done[List[Prize]] { prizes =>
           $.modState(_.copy(prizes = prizes))
@@ -27,11 +25,31 @@ class Game extends AjaxImplicits {
     def playButton(implicit state: State): VdomTagOf[Button] =
       <.button(^.cls := "btn btn-primary btn-md", ^.onClick --> getAllPrize)("Get Free Prize")
 
+    def prizeList(prize: Prize): TagMod =
+      <.li(
+        <.img(^.src := prize.image, ^.alt := "")
+      )
+
     def gameRoulette(implicit state: State): TagMod =
-      ???
+      <.div(
+        <.div(^.className := "wraper",
+          <.div(^.className := "arrowup"),
+          <.div(^.className := "arrowdown"),
+          <.div(^.className := "window",
+            <.ul(^.className := "list")(state.prizes map prizeList: _*)
+          )
+        ),
+        <.p(^.className := "text-center",
+          <.button(^.className := "button", "Кнопка")
+        ),
+        <.div(^.className := "win",
+          <.ul
+        )
+      ).when(state.prizes.nonEmpty)
+
 
     def render(implicit state: State): VdomTagOf[Div] =
-      <.div(playButton)
+      <.div(playButton, gameRoulette)
   }
 
   val AppComponent: AppComponentType =

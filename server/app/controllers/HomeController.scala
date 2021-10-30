@@ -26,6 +26,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
     extends BaseController {
 
   case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
+  case class Prize(prize: String)
 
   val userList: List[User] = List(
     User("Akmal", "Burxonov", "akmal12@gmail.com", "+998998877412", 24),
@@ -35,6 +36,12 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
     User("Ronaldo", "Cristiano", "cr7@gmail.com", "+998998854647", 20),
     User("Elon", "Mask", "elon@gmail.com", "+998913455445", 23),
     User("Martin", "Odersky", "martin@gmail.com", "+998986785677", 28)
+  )
+
+  val prizeList: List[Prize] = List(
+    Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Strawberry.png"),
+    Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Cherry.png"),
+    Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Apple.png")
   )
 
   def index: Action[AnyContent] = Action(Ok(indexTemplate()))
@@ -49,9 +56,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   def game: Action[AnyContent] = Action(Ok(gameTemplate()))
 
   implicit val userFormat: OFormat[User] = Json.format[User]
+  implicit val prizeFormat: OFormat[Prize] = Json.format[Prize]
 
   def getUsers: Action[AnyContent] = Action { implicit request => {
     Ok(Json.toJson(userList))
+  }
+  }
+
+  def getPrizes: Action[AnyContent] = Action { implicit request => {
+    Ok(Json.toJson(prizeList))
   }
   }
 }
