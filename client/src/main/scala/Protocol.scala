@@ -6,10 +6,16 @@ import io.circe.syntax.EncoderOps
 object Protocol {
 
   case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
+  case class Prize(image: String)
 
   object User {
     implicit val decoderUser: Decoder[User] = deriveDecoder[User]
     implicit val encoderUser: Encoder[User] = deriveEncoder[User]
+  }
+
+  object Prize {
+    implicit val decoderUser: Decoder[Prize] = deriveDecoder[Prize]
+    implicit val encoderUser: Encoder[Prize] = deriveEncoder[Prize]
   }
 
 	sealed trait Page

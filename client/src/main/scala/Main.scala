@@ -6,5 +6,6 @@ object Main extends App {
     case "user" => new UserApp()
     case "navbar" => new Navbar()
     case "chatD" => new ChatD()
+    case "game" => new Game()
   }
 }

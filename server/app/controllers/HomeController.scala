@@ -18,6 +18,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                surojiddinTemplate: surojiddin,
                                testTemplate: test,
                                userTemplate: user,
+                               gameTemplate: views.html.game.index,
                                navbarTemp: views.html.navbar.index,
                                chatDTemp: views.html.chatD.index
                               )
@@ -45,6 +46,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   def userPage: Action[AnyContent] = Action(Ok(userTemplate()))
   def navbar: Action[AnyContent] = Action(Ok(navbarTemp()))
   def chatD: Action[AnyContent] = Action(Ok(chatDTemp()))
+  def game: Action[AnyContent] = Action(Ok(gameTemplate()))
 
   implicit val userFormat: OFormat[User] = Json.format[User]
 
