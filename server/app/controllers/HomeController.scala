@@ -1,14 +1,19 @@
 package controllers
 
+import akka.actor.ActorRef
+import akka.pattern.ask
+import akka.util.Timeout
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+import protocols.StudentProtocol.{GetStudents, Student}
 import views.html._
 import views.html.user.user
 
 import javax.inject._
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.DurationInt
 
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
@@ -20,12 +25,16 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                userTemplate: user,
                                gameTemplate: views.html.game.index,
                                navbarTemp: views.html.navbar.index,
-                               chatDTemp: views.html.chatD.index
+                               chatDTemp: views.html.chatD.index,
+                               @Named("student-manager") val studentManager: ActorRef,
                               )
                               (implicit val ec: ExecutionContext)
-    extends BaseController {
+  extends BaseController {
+
+  implicit val defaultTimeout: Timeout = Timeout(60.seconds)
 
   case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
+
   case class Prize(prize: String)
 
   val userList: List[User] = List(
@@ -51,15 +60,20 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   def test: Action[AnyContent] = Action(Ok(testTemplate()))
 
   def userPage: Action[AnyContent] = Action(Ok(userTemplate()))
+
   def navbar: Action[AnyContent] = Action(Ok(navbarTemp()))
+
   def chatD: Action[AnyContent] = Action(Ok(chatDTemp()))
+
   def game: Action[AnyContent] = Action(Ok(gameTemplate()))
 
   implicit val userFormat: OFormat[User] = Json.format[User]
   implicit val prizeFormat: OFormat[Prize] = Json.format[Prize]
 
-  def getUsers: Action[AnyContent] = Action { implicit request => {
-    Ok(Json.toJson(userList))
+  def getUsers: Action[AnyContent] = Action.async { implicit request => {
+    (studentManager ? GetStudents).mapTo[List[Student]].map { studetns =>
+      Ok(Json.toJson(studetns))
+    }
   }
   }
 

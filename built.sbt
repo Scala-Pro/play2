@@ -1,12 +1,12 @@
 import Dependencies.Libraries._
-import Dependencies.{Versions, rootDependencies}
+import Dependencies.{Versions, commonDependencies, rootDependencies}
 
 lazy val projectSettings = scala.Seq(version := "1.0", scalaVersion := "2.13.6")
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("common"))
-  .settings(libraryDependencies ++= circeLibs)
+  .settings(libraryDependencies ++= commonDependencies)
   .settings(projectSettings: _*)
 
 lazy val client = (project in file("client"))
