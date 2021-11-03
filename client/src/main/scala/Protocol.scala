@@ -20,7 +20,7 @@ object Protocol {
 
 	sealed trait Page
 	case object Home extends Page
-	case object CreateUser extends Page
+	case object UserForm extends Page
 	case object UserDashboard extends Page
 
   case class Members(firstname: String, lastname: String, phone: String, direction: String)
