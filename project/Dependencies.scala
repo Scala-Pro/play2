@@ -15,6 +15,7 @@ object Dependencies {
     val circeVersion = "0.14.1"
     val specs2Version = "5.0.0-RC-15"
     val akka = "2.6.14"
+    val skunk = "0.2.2"
   }
 
   object Libraries {
@@ -41,6 +42,11 @@ object Dependencies {
       "com.typesafe.akka" %% "akka-serialization-jackson" % Versions.akka,
       "com.typesafe.akka" %% "akka-testkit" % Versions.akka % Test)
 
+    val skunk = Seq(
+      "org.tpolecat" %% "skunk-core" % Versions.skunk,
+      "org.tpolecat" %% "skunk-circe" % Versions.skunk
+    )
+
   }
   val commonDependencies: Seq[ModuleID] =
     Seq(
@@ -49,5 +55,6 @@ object Dependencies {
   val rootDependencies: Seq[ModuleID] = Seq(Libraries.cats, Libraries.scalaLogging) ++
     Libraries.logBackLibs ++
     Libraries.akka ++
-    Libraries.webjarsLibs
+    Libraries.webjarsLibs ++
+    Libraries.skunk
 }

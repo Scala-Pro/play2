@@ -60,8 +60,8 @@ class Navbar {
               <.li(^.className := "nav-item",
                 <.a(
                   ^.className := "nav-link",
-                  (^.cls := "active").when(state.page == CreateUser),
-                  ^.onClick --> changePage(CreateUser))("User")
+                  (^.cls := "active").when(state.page == UserForm),
+                  ^.onClick --> changePage(UserForm))("User")
               ),
               <.li(^.className := "nav-item",
                 <.a(
@@ -112,7 +112,7 @@ class Navbar {
         <.div(^.cls := "col-6 offset-3")(
           <.button(^.cls := "btn btn-success")("Submit", ^.onClick --> onSubmit)
         )
-      ).when(state.page == CreateUser)
+      )
 
     def createRow(user: User): VdomTagOf[TableRow] =
       <.tr(

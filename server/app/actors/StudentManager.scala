@@ -3,9 +3,15 @@ package actors
 import akka.actor.{Actor, ActorSystem}
 import akka.pattern.pipe
 import akka.util.Timeout
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 import com.typesafe.scalalogging.LazyLogging
+import db.domain.Common.CreateUser
+import db.domain.{User, UserWithoutId}
+import db.module.Database
 import play.api.{Configuration, Environment}
 import protocols.StudentProtocol.{GetStudents, Student}
+import protocols.UserProtocol.GetUsers
 
 import javax.inject.Inject
 import scala.concurrent.duration.DurationInt
@@ -19,10 +25,17 @@ class StudentManager @Inject()(
 
   implicit val executionContext: ExecutionContext = context.dispatcher
   implicit val defaultTimeout: Timeout = Timeout(60.seconds)
+  val database: Database[IO] = Database[IO]
 
   override def receive: Receive = {
     case GetStudents =>
       getStudents.pipeTo(sender())
+
+    case CreateUser(user) =>
+      createUser(user).pipeTo(sender())
+
+    case GetUsers =>
+      getUsers.pipeTo(sender())
   }
 
   val userList: List[Student] = List(
@@ -40,4 +53,16 @@ class StudentManager @Inject()(
     Future.successful(userList)
     // write code to ask students from DB
   }
+
+  def createUser(user: UserWithoutId): Future[User] = {
+    database.userAlgebra.flatMap(_.create(user)).unsafeToFuture()
+  }
+
+  def getUsers: Future[List[User]] = {
+    database.userAlgebra.flatMap(_.findAll).unsafeToFuture()
+  }
+
+
+
+
 }
