@@ -19,7 +19,7 @@ object Database {
         port = 5432,
         database = "playexample",
         user = "admin",
-        password = "admin123".some,
+        password = "123".some,
         max = 1024)
 
     override val userAlgebra: F[UserAlgebra[F]] = session.use(s => F.delay(UserAlgebra[F](s)))

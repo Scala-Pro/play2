@@ -8,12 +8,12 @@ import skunk.implicits._
 object UserSql {
 
   val codec: Codec[User] =
-    (int4 ~ varchar).imap {
-      case i ~ n => User(i, n)
-    }(c => c.id ~ c.name)
+    (int4 ~ varchar ~ varchar ~ int4.opt).imap {
+      case i ~ n ~ l ~ a => User(i, n, l, a)
+    }(c => c.id ~ c.name ~ c.lastName ~ c.age)
 
   val insert: Query[UserWithoutId, User] =
-    sql"""INSERT INTO "user" VALUES (DEFAULT, $varchar) returning id, name"""
+    sql"""INSERT INTO "user" VALUES (DEFAULT, $varchar, $varchar, $int4) returning id, name, last_name, age"""
       .query(codec)
       .gcontramap[UserWithoutId]
 

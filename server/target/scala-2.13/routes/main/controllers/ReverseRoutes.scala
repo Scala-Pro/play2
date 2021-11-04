@@ -16,6 +16,18 @@ package controllers {
     }
 
   
+    // @LINE:6
+    def getStudents: Call = {
+      
+      Call("GET", _prefix + { _defaultPrefix } + "users")
+    }
+  
+    // @LINE:11
+    def createUser: Call = {
+      
+      Call("GET", _prefix + { _defaultPrefix } + "create-user")
+    }
+  
     // @LINE:10
     def getPrizes: Call = {
       
@@ -28,10 +40,10 @@ package controllers {
       Call("GET", _prefix + { _defaultPrefix } + "navbar")
     }
   
-    // @LINE:6
+    // @LINE:12
     def getUsers: Call = {
       
-      Call("GET", _prefix + { _defaultPrefix } + "users")
+      Call("GET", _prefix + { _defaultPrefix } + "get-user")
     }
   
     // @LINE:3
@@ -72,14 +84,14 @@ package controllers {
   
   }
 
-  // @LINE:12
+  // @LINE:14
   class ReverseAssets(_prefix: => String) {
     def _defaultPrefix: String = {
       if (_prefix.endsWith("/")) "" else "/"
     }
 
   
-    // @LINE:12
+    // @LINE:14
     def versioned(file:Asset): Call = {
       implicit lazy val _rrc = new play.core.routing.ReverseRouteContext(Map(("path", "/public"))); _rrc
       Call("GET", _prefix + { _defaultPrefix } + "assets/" + implicitly[play.api.mvc.PathBindable[Asset]].unbind("file", file))

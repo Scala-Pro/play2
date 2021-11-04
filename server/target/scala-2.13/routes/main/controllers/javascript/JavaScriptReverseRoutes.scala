@@ -17,6 +17,26 @@ package controllers.javascript {
     }
 
   
+    // @LINE:6
+    def getStudents: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.HomeController.getStudents",
+      """
+        function() {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "users"})
+        }
+      """
+    )
+  
+    // @LINE:11
+    def createUser: JavaScriptReverseRoute = JavaScriptReverseRoute(
+      "controllers.HomeController.createUser",
+      """
+        function() {
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "create-user"})
+        }
+      """
+    )
+  
     // @LINE:10
     def getPrizes: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.HomeController.getPrizes",
@@ -37,12 +57,12 @@ package controllers.javascript {
       """
     )
   
-    // @LINE:6
+    // @LINE:12
     def getUsers: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.HomeController.getUsers",
       """
         function() {
-          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "users"})
+          return _wA({method:"GET", url:"""" + _prefix + { _defaultPrefix } + """" + "get-user"})
         }
       """
     )
@@ -109,7 +129,7 @@ package controllers.javascript {
   
   }
 
-  // @LINE:12
+  // @LINE:14
   class ReverseAssets(_prefix: => String) {
 
     def _defaultPrefix: String = {
@@ -117,7 +137,7 @@ package controllers.javascript {
     }
 
   
-    // @LINE:12
+    // @LINE:14
     def versioned: JavaScriptReverseRoute = JavaScriptReverseRoute(
       "controllers.Assets.versioned",
       """

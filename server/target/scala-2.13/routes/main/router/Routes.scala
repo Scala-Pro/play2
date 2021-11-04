@@ -14,9 +14,9 @@ class Routes(
   override val errorHandler: play.api.http.HttpErrorHandler, 
   // @LINE:2
   HomeController_0: javax.inject.Provider[controllers.HomeController],
-  // @LINE:12
+  // @LINE:14
   Assets_1: javax.inject.Provider[controllers.Assets],
-  // @LINE:13
+  // @LINE:15
   webjars_Routes_0: webjars.Routes,
   val prefix: String
 ) extends GeneratedRouter {
@@ -25,9 +25,9 @@ class Routes(
    def this(errorHandler: play.api.http.HttpErrorHandler,
     // @LINE:2
     HomeController_0: javax.inject.Provider[controllers.HomeController],
-    // @LINE:12
+    // @LINE:14
     Assets_1: javax.inject.Provider[controllers.Assets],
-    // @LINE:13
+    // @LINE:15
     webjars_Routes_0: webjars.Routes
   ) = this(errorHandler, HomeController_0, Assets_1, webjars_Routes_0, "/")
 
@@ -46,13 +46,15 @@ class Routes(
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """surojiddin""", """@controllers.HomeController@.surojiddin"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """test""", """@controllers.HomeController@.test"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """user""", """@controllers.HomeController@.userPage"""),
-    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """users""", """@controllers.HomeController@.getUsers"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """users""", """@controllers.HomeController@.getStudents"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """navbar""", """@controllers.HomeController@.navbar"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """chatD""", """@controllers.HomeController@.chatD"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """game""", """@controllers.HomeController@.game"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """prizes""", """@controllers.HomeController@.getPrizes"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """create-user""", """@controllers.HomeController@.createUser"""),
+    ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """get-user""", """@controllers.HomeController@.getUsers"""),
     ("""GET""", this.prefix + (if(this.prefix.endsWith("/")) "" else "/") + """assets/""" + "$" + """file<.+>""", """@controllers.Assets@.versioned(path:String = "/public", file:Asset)"""),
-    prefixed_webjars_Routes_0_10.router.documentation,
+    prefixed_webjars_Routes_0_12.router.documentation,
     Nil
   ).foldLeft(List.empty[(String,String,String)]) { (s,e) => e.asInstanceOf[Any] match {
     case r @ (_,_,_) => s :+ r.asInstanceOf[(String,String,String)]
@@ -133,15 +135,15 @@ class Routes(
   )
 
   // @LINE:6
-  private[this] lazy val controllers_HomeController_getUsers4_route = Route("GET",
+  private[this] lazy val controllers_HomeController_getStudents4_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("users")))
   )
-  private[this] lazy val controllers_HomeController_getUsers4_invoker = createInvoker(
-    HomeController_0.get.getUsers,
+  private[this] lazy val controllers_HomeController_getStudents4_invoker = createInvoker(
+    HomeController_0.get.getStudents,
     play.api.routing.HandlerDef(this.getClass.getClassLoader,
       "router",
       "controllers.HomeController",
-      "getUsers",
+      "getStudents",
       Nil,
       "GET",
       this.prefix + """users""",
@@ -222,11 +224,47 @@ class Routes(
     )
   )
 
+  // @LINE:11
+  private[this] lazy val controllers_HomeController_createUser9_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("create-user")))
+  )
+  private[this] lazy val controllers_HomeController_createUser9_invoker = createInvoker(
+    HomeController_0.get.createUser,
+    play.api.routing.HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.HomeController",
+      "createUser",
+      Nil,
+      "GET",
+      this.prefix + """create-user""",
+      """""",
+      Seq()
+    )
+  )
+
   // @LINE:12
-  private[this] lazy val controllers_Assets_versioned9_route = Route("GET",
+  private[this] lazy val controllers_HomeController_getUsers10_route = Route("GET",
+    PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("get-user")))
+  )
+  private[this] lazy val controllers_HomeController_getUsers10_invoker = createInvoker(
+    HomeController_0.get.getUsers,
+    play.api.routing.HandlerDef(this.getClass.getClassLoader,
+      "router",
+      "controllers.HomeController",
+      "getUsers",
+      Nil,
+      "GET",
+      this.prefix + """get-user""",
+      """""",
+      Seq()
+    )
+  )
+
+  // @LINE:14
+  private[this] lazy val controllers_Assets_versioned11_route = Route("GET",
     PathPattern(List(StaticPart(this.prefix), StaticPart(this.defaultPrefix), StaticPart("assets/"), DynamicPart("file", """.+""",false)))
   )
-  private[this] lazy val controllers_Assets_versioned9_invoker = createInvoker(
+  private[this] lazy val controllers_Assets_versioned11_invoker = createInvoker(
     Assets_1.get.versioned(fakeValue[String], fakeValue[Asset]),
     play.api.routing.HandlerDef(this.getClass.getClassLoader,
       "router",
@@ -240,8 +278,8 @@ class Routes(
     )
   )
 
-  // @LINE:13
-  private[this] val prefixed_webjars_Routes_0_10 = Include(webjars_Routes_0.withPrefix(this.prefix + (if (this.prefix.endsWith("/")) "" else "/") + "webjars"))
+  // @LINE:15
+  private[this] val prefixed_webjars_Routes_0_12 = Include(webjars_Routes_0.withPrefix(this.prefix + (if (this.prefix.endsWith("/")) "" else "/") + "webjars"))
 
 
   def routes: PartialFunction[RequestHeader, Handler] = {
@@ -271,9 +309,9 @@ class Routes(
       }
   
     // @LINE:6
-    case controllers_HomeController_getUsers4_route(params@_) =>
+    case controllers_HomeController_getStudents4_route(params@_) =>
       call { 
-        controllers_HomeController_getUsers4_invoker.call(HomeController_0.get.getUsers)
+        controllers_HomeController_getStudents4_invoker.call(HomeController_0.get.getStudents)
       }
   
     // @LINE:7
@@ -300,13 +338,25 @@ class Routes(
         controllers_HomeController_getPrizes8_invoker.call(HomeController_0.get.getPrizes)
       }
   
-    // @LINE:12
-    case controllers_Assets_versioned9_route(params@_) =>
-      call(Param[String]("path", Right("/public")), params.fromPath[Asset]("file", None)) { (path, file) =>
-        controllers_Assets_versioned9_invoker.call(Assets_1.get.versioned(path, file))
+    // @LINE:11
+    case controllers_HomeController_createUser9_route(params@_) =>
+      call { 
+        controllers_HomeController_createUser9_invoker.call(HomeController_0.get.createUser)
       }
   
-    // @LINE:13
-    case prefixed_webjars_Routes_0_10(handler) => handler
+    // @LINE:12
+    case controllers_HomeController_getUsers10_route(params@_) =>
+      call { 
+        controllers_HomeController_getUsers10_invoker.call(HomeController_0.get.getUsers)
+      }
+  
+    // @LINE:14
+    case controllers_Assets_versioned11_route(params@_) =>
+      call(Param[String]("path", Right("/public")), params.fromPath[Asset]("file", None)) { (path, file) =>
+        controllers_Assets_versioned11_invoker.call(Assets_1.get.versioned(path, file))
+      }
+  
+    // @LINE:15
+    case prefixed_webjars_Routes_0_12(handler) => handler
   }
 }

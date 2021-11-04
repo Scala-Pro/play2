@@ -41,7 +41,7 @@ class HomeController @Inject() (
     Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Cherry.png"),
     Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Apple.png"))
 
-  val user = UserWithoutId("name4")
+  val user = UserWithoutId("John", "Jones", 23)
 
   def index: Action[AnyContent] = Action(Ok(indexTemplate()))
 

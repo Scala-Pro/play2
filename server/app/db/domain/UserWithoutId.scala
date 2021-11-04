@@ -2,10 +2,12 @@ package db.domain
 
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
-import User.UserName
+import User.{Age, LastName, UserName}
 
 case class UserWithoutId(
-  name: UserName
+  name: UserName,
+  lastName: LastName,
+  age: Age
 )
 
 object UserWithoutId {
