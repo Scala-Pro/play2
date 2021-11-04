@@ -7,6 +7,7 @@ import play.api.libs.json.{Json, OFormat}
 object StudentProtocol {
 
   case class Student(firstname: String, lastname: String, email: String, phone: String, age: Int)
+  case class User(firstname: String, lastname: String, id: Int)
 
   implicit val studentFormatter: OFormat[Student] = Json.format[Student]
 
@@ -16,5 +17,6 @@ object StudentProtocol {
   }
 
   case object GetStudents
+  case object GetUser
 
 }

@@ -40,8 +40,4 @@ class StudentManager @Inject()(
     Future.successful(userList)
     // write code to ask students from DB
   }
-
-
-
-
 }
