@@ -1,8 +1,8 @@
-package service
+package db.domain
 
 import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
 import io.circe.{Decoder, Encoder}
-import service.User.UserName
+import User.UserName
 
 case class UserWithoutId(
   name: UserName
