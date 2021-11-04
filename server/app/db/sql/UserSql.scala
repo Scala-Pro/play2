@@ -17,8 +17,8 @@ object UserSql {
       .query(codec)
       .gcontramap[UserWithoutId]
 
-//  val selectAll: Query[Void, User] =
-//    sql"""SELECT * FROM "user" """.query(codec)
+  val selectAll: Query[Void, User] =
+    sql"""SELECT * FROM "user" """.query(codec)
 }
 
 

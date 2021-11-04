@@ -7,6 +7,8 @@ import skunk._
 
 trait UserAlgebra[F[_]]{
   def create(user: UserWithoutId): F[User]
+
+  def findAll: F[List[User]]
 }
 
 object UserAlgebra {
@@ -15,6 +17,9 @@ object UserAlgebra {
     new UserAlgebra[F] {
       def create(user: UserWithoutId): F[User] =
         session.use(_.prepare(insert).use(_.unique(user)))
+
+      override def findAll: F[List[User]] =
+        session.use(_.execute(selectAll))
     }
 
 }

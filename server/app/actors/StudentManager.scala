@@ -11,6 +11,7 @@ import db.domain.{User, UserWithoutId}
 import db.module.Database
 import play.api.{Configuration, Environment}
 import protocols.StudentProtocol.{GetStudents, Student}
+import protocols.UserProtocol.GetUsers
 
 import javax.inject.Inject
 import scala.concurrent.duration.DurationInt
@@ -32,6 +33,9 @@ class StudentManager @Inject()(
 
     case CreateUser(user) =>
       createUser(user).pipeTo(sender())
+
+    case GetUsers =>
+      getUsers.pipeTo(sender())
   }
 
   val userList: List[Student] = List(
@@ -54,6 +58,9 @@ class StudentManager @Inject()(
     database.userAlgebra.flatMap(_.create(user)).unsafeToFuture()
   }
 
+  def getUsers: Future[List[User]] = {
+    database.userAlgebra.flatMap(_.findAll).unsafeToFuture()
+  }
 
 
 

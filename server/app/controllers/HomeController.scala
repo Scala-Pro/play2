@@ -10,6 +10,7 @@ import play.api.Configuration
 import play.api.libs.json.{Json, OFormat}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import protocols.StudentProtocol.{GetStudents, Student}
+import protocols.UserProtocol.GetUsers
 import views.html._
 import views.html.user.user
 
@@ -59,7 +60,7 @@ class HomeController @Inject() (
   implicit val userFormat: OFormat[User]   = Json.format[User]
   implicit val prizeFormat: OFormat[Prize] = Json.format[Prize]
 
-  def getUsers: Action[AnyContent] = Action.async { implicit request =>
+  def getStudents: Action[AnyContent] = Action.async { implicit request =>
     {
       (studentManager ? GetStudents).mapTo[List[Student]].map { studetns =>
         Ok(Json.toJson(studetns))
@@ -85,6 +86,14 @@ class HomeController @Inject() (
         }
 
     }
+  }
+
+  def getUsers: Action[AnyContent] = Action.async { implicit request =>
+  {
+    (studentManager ? GetUsers).mapTo[List[User]].map { users =>
+      Ok(Json.toJson(users))
+    }
+  }
   }
 
   case class Prize(prize: String)
