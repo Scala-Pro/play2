@@ -3,8 +3,8 @@ package controllers
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import db.domain.Common.CreateUser
-import db.domain.{User, UserWithoutId}
+import db.domain.Common.{CreateTeacher, CreateUser}
+import db.domain.{Teacher, TeacherIdsiz, User, UserWithoutId}
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.libs.json.{Json, OFormat}
@@ -13,8 +13,8 @@ import protocols.StudentProtocol.{GetStudents, Student}
 import protocols.UserProtocol.GetUsers
 import views.html._
 import views.html.user.user
-
 import javax.inject._
+
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
 
@@ -43,6 +43,8 @@ class HomeController @Inject() (
 
   val user = UserWithoutId("name4")
 
+  val teacher = TeacherIdsiz("teacher1")
+
   def index: Action[AnyContent] = Action(Ok(indexTemplate()))
 
   def surojiddin: Action[AnyContent] = Action(Ok(surojiddinTemplate()))
@@ -59,6 +61,7 @@ class HomeController @Inject() (
 
   implicit val userFormat: OFormat[User]   = Json.format[User]
   implicit val prizeFormat: OFormat[Prize] = Json.format[Prize]
+  implicit val teacherFormat: OFormat[Teacher] = Json.format[Teacher]
 
   def getStudents: Action[AnyContent] = Action.async { implicit request =>
     {
@@ -79,6 +82,19 @@ class HomeController @Inject() (
       (studentManager ? CreateUser(user))
         .mapTo[User].map { user =>
           Ok(Json.toJson(user))
+        }
+        .recover { case err =>
+          println(s"Error: $err")
+          BadRequest("Error")
+        }
+
+    }
+  }
+  def createTeacher: Action[AnyContent] = Action.async { implicit request =>
+    {
+      (studentManager ? CreateTeacher(teacher))
+        .mapTo[Teacher].map { teacher =>
+          Ok(Json.toJson(teacher))
         }
         .recover { case err =>
           println(s"Error: $err")
