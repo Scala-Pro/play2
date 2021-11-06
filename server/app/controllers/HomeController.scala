@@ -3,20 +3,35 @@ package controllers
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
+import cats.implicits.catsSyntaxApplicativeError
+import com.typesafe.scalalogging.LazyLogging
 import db.domain.Common.{CreateTeacher, CreateUser}
 import db.domain.{Teacher, TeacherIdsiz, User, UserWithoutId}
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{Json, OFormat, Reads, __}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import protocols.StudentProtocol.{GetStudents, Student}
 import protocols.UserProtocol.GetUsers
+import protocols.{Company, CompanyWithoutId, CreateCompany}
 import views.html._
 import views.html.user.user
 import javax.inject._
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
+
+object HomeController {
+  implicit val companyReads: Reads[CompanyWithoutId] = (
+    (__ \ "name").read[String] and
+      (__ \ "email").read[String] and
+      (__ \ "phone").read[String] and
+      (__ \ "workerCount").read[Int]
+  )(CompanyWithoutId.apply _)
+
+  implicit val companyFormat: OFormat[Company] = Json.format[Company]
+}
 
 @Singleton
 class HomeController @Inject() (
@@ -30,18 +45,22 @@ class HomeController @Inject() (
   gameTemplate: views.html.game.index,
   navbarTemp: views.html.navbar.index,
   chatDTemp: views.html.chatD.index,
-  @Named("student-manager") val studentManager: ActorRef
+  @Named("student-manager") val studentManager: ActorRef,
+  @Named("company-manager") val companyManager: ActorRef
 )(implicit val ec: ExecutionContext)
-    extends BaseController {
+    extends BaseController
+    with LazyLogging {
 
-  implicit val defaultTimeout: Timeout = Timeout(60.seconds)
+  import HomeController._
+  implicit val defaultTimeout: Timeout = Timeout(10.seconds)
 
   val prizeList: List[Prize] = List(
     Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Strawberry.png"),
     Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Cherry.png"),
-    Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Apple.png"))
+    Prize("https://cdn0.iconfinder.com/data/icons/fruits/128/Apple.png")
+  )
 
-  val user = UserWithoutId("name4")
+  val user: UserWithoutId = UserWithoutId("Martin", "Odersky")
 
   val teacher = TeacherIdsiz("teacher1")
 
@@ -63,18 +82,20 @@ class HomeController @Inject() (
   implicit val prizeFormat: OFormat[Prize] = Json.format[Prize]
   implicit val teacherFormat: OFormat[Teacher] = Json.format[Teacher]
 
-  def getStudents: Action[AnyContent] = Action.async { implicit request =>
-    {
-      (studentManager ? GetStudents).mapTo[List[Student]].map { studetns =>
-        Ok(Json.toJson(studetns))
+  def getStudents: Action[AnyContent] = Action.async {
+    (studentManager ? GetStudents)
+      .mapTo[List[Student]]
+      .map { students =>
+        Ok(Json.toJson(students))
       }
-    }
+      .recover { case e =>
+        logger.error("Error happened", e)
+        Ok("Error")
+      }
   }
 
-  def getPrizes: Action[AnyContent] = Action { implicit request =>
-    {
-      Ok(Json.toJson(prizeList))
-    }
+  def getPrizes: Action[AnyContent] = Action {
+    Ok(Json.toJson(prizeList))
   }
 
   def createUser: Action[AnyContent] = Action.async { implicit request =>
@@ -88,29 +109,25 @@ class HomeController @Inject() (
           BadRequest("Error")
         }
 
-    }
-  }
-  def createTeacher: Action[AnyContent] = Action.async { implicit request =>
-    {
-      (studentManager ? CreateTeacher(teacher))
-        .mapTo[Teacher].map { teacher =>
-          Ok(Json.toJson(teacher))
-        }
-        .recover { case err =>
-          println(s"Error: $err")
-          BadRequest("Error")
-        }
-
-    }
   }
 
-  def getUsers: Action[AnyContent] = Action.async { implicit request =>
-  {
+  def getUsers: Action[AnyContent] = Action.async {
     (studentManager ? GetUsers).mapTo[List[User]].map { users =>
       Ok(Json.toJson(users))
     }
   }
-  }
 
   case class Prize(prize: String)
+
+  def createCompany: Action[CompanyWithoutId] = Action.async(parse.json[CompanyWithoutId]) { request =>
+    (companyManager ? CreateCompany(request.body))
+      .mapTo[Company]
+      .map { company =>
+        Ok(Json.toJson(company))
+      }
+      .handleError { error =>
+        logger.error("Error occurred while create Company. Error: ", error)
+        BadRequest("Tashkilot yaratishda xatolik yuz berdi. Iltimos qayta harakat qilib ko'ring!")
+      }
+  }
 }

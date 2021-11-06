@@ -12,5 +12,8 @@ GET     /create-user                                 @controllers.HomeController
 GET     /create-teacher                              @controllers.HomeController.createTeacher
 GET     /get-user                                    @controllers.HomeController.getUsers
 
++nocsrf
+POST    /company                                     @controllers.HomeController.createCompany
+
 GET     /assets/*file                                @controllers.Assets.versioned(path="/public", file: Asset)
 ->      /webjars                                     webjars.Routes

@@ -5,7 +5,7 @@ import io.circe.syntax.EncoderOps
 
 object Protocol {
 
-  case class User(firstname: String, lastname: String, email: String, phone: String, age: Int)
+  case class User(fullName: String, email: String, phone: String, age: Int)
   case class Prize(image: String)
 
   object User {
@@ -20,8 +20,8 @@ object Protocol {
 
 	sealed trait Page
 	case object Home extends Page
-	case object UserForm extends Page
-	case object UserDashboard extends Page
+	case object CompanyForm extends Page
+	case object CompanyDashboard extends Page
 
   case class Members(firstname: String, lastname: String, phone: String, direction: String)
 

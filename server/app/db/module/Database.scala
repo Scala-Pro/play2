@@ -3,12 +3,14 @@ package db.module
 import cats.effect.std.Console
 import cats.effect.{Async, Sync}
 import cats.implicits.catsSyntaxOptionId
+import db.algebra.{CompanyAlgebra, LiveCompanyAlgebra, UserAlgebra}
 import db.algebra.{TeacherAlgebra, UserAlgebra}
 import natchez.Trace.Implicits.noop
 import skunk.{Session, SessionPool}
 
 trait Database[F[_]] {
   val userAlgebra: F[UserAlgebra[F]]
+  val companyAlgebra: F[CompanyAlgebra[F]]
   val teacherAlgebra: F[TeacherAlgebra[F]]
 }
 
@@ -24,7 +26,6 @@ object Database {
         max = 1024)
 
     override val userAlgebra: F[UserAlgebra[F]] = session.use(s => F.delay(UserAlgebra[F](s)))
-    override val teacherAlgebra: F[TeacherAlgebra[F]] = session.use(s => F.delay(TeacherAlgebra[F](s)))
   }
 
 }

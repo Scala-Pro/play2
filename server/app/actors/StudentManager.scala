@@ -2,6 +2,7 @@ package actors
 
 import akka.actor.{Actor, ActorSystem}
 import akka.pattern.pipe
+import akka.pattern.ask
 import akka.util.Timeout
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
@@ -24,12 +25,18 @@ class StudentManager @Inject()(
   extends Actor with LazyLogging {
 
   implicit val executionContext: ExecutionContext = context.dispatcher
-  implicit val defaultTimeout: Timeout = Timeout(60.seconds)
+  implicit val defaultTimeout: Timeout = Timeout(10.seconds)
+
+  override def preStart(): Unit = {
+    (self ? GetStudents).mapTo[List[Student]].map { students =>
+      logger.debug(s"Students: $students")
+    }
+  }
   val database: Database[IO] = Database[IO]
 
   override def receive: Receive = {
     case GetStudents =>
-      getStudents.pipeTo(sender())
+      sender() ! getStudents
 
     case CreateUser(user) =>
       createUser(user).pipeTo(sender())
@@ -39,10 +46,14 @@ class StudentManager @Inject()(
 
     case GetUsers =>
       getUsers.pipeTo(sender())
+
+    case other =>
+      logger.error(s"CMD not found: [ $other]")
+      sender() ! "Cmd not found!"
   }
 
   val userList: List[Student] = List(
-    Student("Behruz", "Burxonov", "akmal12@gmail.com", "+998998877412", 24),
+    Student("BoshqaIsm", "Burxonov", "akmal12@gmail.com", "+998998877412", 24),
     Student("Sardor", "Jamshidov", "sardor@inbox.ru", "+998905674545", 22),
     Student("Mack", "Daniel", "mack@gmail.com", "+998932344355", 19),
     Student("Dimitry", "Kuskin", "kuskin@gmail.com", "+998997564587", 35),
@@ -51,11 +62,8 @@ class StudentManager @Inject()(
     Student("Martin", "Odersky", "martin@gmail.com", "+998986785677", 28)
   )
 
-  private def getStudents: Future[List[Student]] = {
-    logger.debug(s"Students........")
-    Future.successful(userList)
+  private def getStudents: List[Student] = userList
     // write code to ask students from DB
-  }
 
   def createUser(user: UserWithoutId): Future[User] = {
     database.userAlgebra.flatMap(_.create(user)).unsafeToFuture()
