@@ -7,6 +7,8 @@ import skunk._
 
 trait CompanyAlgebra[F[_]] {
   def create(company: CompanyWithoutId): F[Company]
+
+  def getCompanyNames(): F[List[Company]]
 }
 
 object LiveCompanyAlgebra {
@@ -22,4 +24,7 @@ final class LiveCompanyAlgebra[F[_]: Async] private (
 
   override def create(company: CompanyWithoutId): F[Company] =
     session.use(_.prepare(insert).use(_.unique(company)))
+
+  override def getCompanyNames(): F[List[Company]] =
+    session.use(_.execute(getCompany))
 }

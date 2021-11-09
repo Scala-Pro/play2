@@ -14,11 +14,11 @@ import play.api.libs.json.{Json, OFormat, Reads, __}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import protocols.StudentProtocol.{GetStudents, Student}
 import protocols.UserProtocol.GetUsers
-import protocols.{Company, CompanyWithoutId, CreateCompany}
+import protocols.{Company, CompanyWithoutId, CreateCompany, GetCompany}
 import views.html._
 import views.html.user.user
-import javax.inject._
 
+import javax.inject._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration.DurationInt
 
@@ -119,6 +119,18 @@ class HomeController @Inject() (
   def createCompany: Action[CompanyWithoutId] = Action.async(parse.json[CompanyWithoutId]) { request =>
     (companyManager ? CreateCompany(request.body))
       .mapTo[Company]
+      .map { company =>
+        Ok(Json.toJson(company))
+      }
+      .handleError { error =>
+        logger.error("Error occurred while create Company. Error: ", error)
+        BadRequest("Tashkilot yaratishda xatolik yuz berdi. Iltimos qayta harakat qilib ko'ring!")
+      }
+  }
+
+  def getCompany: Action[AnyContent] = Action.async { request =>
+    (companyManager ? GetCompany())
+      .mapTo[List[Company]]
       .map { company =>
         Ok(Json.toJson(company))
       }

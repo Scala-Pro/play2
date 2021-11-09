@@ -8,7 +8,7 @@ import cats.effect.unsafe.implicits.global
 import com.typesafe.scalalogging.LazyLogging
 import db.module.Database
 import play.api.Configuration
-import protocols.{Company, CompanyWithoutId, CreateCompany}
+import protocols.{Company, CompanyWithoutId, CreateCompany, GetCompany}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,6 +25,9 @@ class CompanyManager @Inject()(
     case CreateCompany(company) =>
       createCompany(company).pipeTo(sender())
 
+    case GetCompany() =>
+      getCompany.pipeTo(sender())
+
     case other =>
       logger.error(s"CMD not found: [ $other]")
       sender() ! "Cmd not found!"
@@ -33,5 +36,7 @@ class CompanyManager @Inject()(
   private def createCompany(value: CompanyWithoutId): Future[Company] =
     database.companyAlgebra.flatMap(_.create(value)).unsafeToFuture()
 
+  private def getCompany: Future[List[Company]] =
+    database.companyAlgebra.flatMap(_.getCompanyNames()).unsafeToFuture()
 
 }

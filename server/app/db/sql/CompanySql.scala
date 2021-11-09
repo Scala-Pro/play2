@@ -17,4 +17,6 @@ object CompanySql {
       .query(codec)
       .gcontramap[CompanyWithoutId]
 
+  val getCompany: Query[Void, Company] =
+    sql""" SELECT * FROM "company" """.query(codec)
 }
