@@ -14,9 +14,10 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.DurationInt
 
-class CompanyManager @Inject()(
-  implicit val configuration: Configuration
-) extends Actor with LazyLogging {
+class CompanyManager @Inject() (implicit
+  val configuration: Configuration
+) extends Actor
+    with LazyLogging {
   implicit val executionContext: ExecutionContext = context.dispatcher
   implicit val defaultTimeout: Timeout            = Timeout(10.seconds)
 
@@ -36,7 +37,7 @@ class CompanyManager @Inject()(
   private def createCompany(value: CompanyWithoutId): Future[Company] =
     database.companyAlgebra.flatMap(_.create(value)).unsafeToFuture()
 
-  private def getCompany: Future[List[Company]] =
+  private def getCompany: Future[List[Company]] = {
     database.companyAlgebra.flatMap(_.getCompanyNames()).unsafeToFuture()
-
+  }
 }

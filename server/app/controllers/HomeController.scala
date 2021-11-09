@@ -95,17 +95,15 @@ class HomeController @Inject() (
     Ok(Json.toJson(prizeList))
   }
 
-  def createUser: Action[AnyContent] = Action.async { implicit request =>
-    {
-      (studentManager ? CreateUser(user))
-        .mapTo[User].map { user =>
-          Ok(Json.toJson(user))
-        }
-        .recover { case err =>
-          println(s"Error: $err")
-          BadRequest("Error")
-        }
-
+  def createUser: Action[AnyContent] = Action.async { implicit request => {
+    (studentManager ? CreateUser(user))
+      .mapTo[User].map { user =>
+      Ok(Json.toJson(user))
+    }
+      .recover { case err =>
+        println(s"Error: $err")
+        BadRequest("Error")
+      }
   }}
 
   def getUsers: Action[AnyContent] = Action.async {

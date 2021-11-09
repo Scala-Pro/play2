@@ -22,6 +22,7 @@ object Protocol {
 	case object Home extends Page
 	case object CompanyForm extends Page
 	case object CompanyDashboard extends Page
+	case object UserForm extends Page
 
   case class Members(firstname: String, lastname: String, phone: String, direction: String)
 
