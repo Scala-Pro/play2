@@ -6,33 +6,25 @@ import japgolly.scalajs.react.{Callback, CtorType, ScalaComponent}
 import org.scalajs.dom.document
 import org.scalajs.dom.html.{Div, Element, TableRow}
 import org.scalajs.dom.raw.HTMLInputElement
+import protocols._
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("Navbar")
-class Navbar {
+class Navbar extends AjaxImplicits {
 
   type AppComponentType = Component[Unit, State, Backend, CtorType.Nullary]
 
   case class State(
-    firstname: String = "",
-    lastname: String = "",
-    age: Int = 0,
-    users: List[User] =Nil,
-    page: Page = Home,
-    messages: List[Message] = Nil,
-    text: String = ""
+    name: String = "",
+    email: String = "",
+    phone: String = "",
+    workersCount: Int = 0,
+    companies: List[Company] =Nil,
+    page: Page = Home
   )
 
-  sealed trait Owner
-  case object Me extends Owner
-  case object You extends Owner
-
-  case class Message(text: String, owner: Owner)
-
   class Backend($: BackendScope[Unit, State]) {
-    def onSend(implicit state: State): Callback =
-      $.modState(_.copy(messages = state.messages :+ Message(state.text, Me) :+ Message(fakeMessage, You)))
 
     def changePage(selectedPage: Page): Callback =
       $.modState(_.copy(page = selectedPage))
@@ -55,148 +47,92 @@ class Navbar {
               <.li(^.className := "nav-item",
                 <.a(
                   ^.className := "nav-link",
-                  (^.cls := "active").when(state.page == CreateUser),
-                  ^.onClick --> changePage(CreateUser))("User")
+                  (^.cls := "active").when(state.page == CompanyForm),
+                  ^.onClick --> changePage(CompanyForm))("Company")
               ),
               <.li(^.className := "nav-item",
                 <.a(
                   ^.className := "nav-link",
-                  (^.cls := "active").when(state.page == UserDashboard),
-                  ^.onClick --> changePage(UserDashboard))("Users")
-              ),
-              <.li(^.className := "nav-item",
-                <.a(
-                  ^.className := "nav-link",
-                  (^.cls := "active").when(state.page == ChatUI),
-                  ^.onClick --> changePage(ChatUI))("Chat")
+                  (^.cls := "active").when(state.page == CompanyDashboard),
+                  ^.onClick --> changePage(CompanyDashboard))("Companies")
               )
             )
           )
         )
       )
 
-    def onChangeAge(event: SyntheticFormEvent[HTMLInputElement]): Callback =
-      $.modState(_.copy(age = event.target.value.toInt))
+    def onChangeWorkersCount(event: SyntheticFormEvent[HTMLInputElement]): Callback =
+      $.modState(_.copy(workersCount = event.target.value.toInt))
 
-    def onChangeFirstname(event: SyntheticFormEvent[HTMLInputElement]): Callback =
-      $.modState(_.copy(firstname = event.target.value))
+    def onChangeName(event: SyntheticFormEvent[HTMLInputElement]): Callback =
+      $.modState(_.copy(name = event.target.value))
 
-    def onChangeLastname(event: SyntheticFormEvent[HTMLInputElement]): Callback =
-      $.modState(_.copy(lastname = event.target.value))
+    def onChangeEmail(event: SyntheticFormEvent[HTMLInputElement]): Callback =
+      $.modState(_.copy(email = event.target.value))
 
-    def onChangeMessage(event: SyntheticFormEvent[HTMLInputElement]): Callback =
-      $.modState(_.copy(text = event.target.value))
+    def onChangePhone(event: SyntheticFormEvent[HTMLInputElement]): Callback =
+      $.modState(_.copy(phone = event.target.value))
 
-    def onSubmit(implicit state: State): Callback =
-      $.modState(_.copy(users = state.users :+ User(state.firstname, state.lastname, "", "", state.age)))
+    def onSubmit(implicit state: State): Callback = {
+      val company =  CompanyWithoutId(state.name, state.email, state.phone, state.workersCount)
+      post[CompanyWithoutId]("/company", company)
+        .fail(onError)
+        .done[Company] { company =>
+          $.modState(s => s.copy(companies = state.companies :+ company)) >>
+            Callback.alert("Successfully created")
+        }.asCallback
+    }
 
     def homePage(implicit state: State): TagMod =
       <.div("Home page.").when(state.page == Home)
 
-    def userForm(implicit state: State): TagMod =
+    def companyForm(implicit state: State): TagMod =
       <.div(^.cls := "row")(
         <.div(^.cls := "col-6 offset-3")(
           <.div(^.cls := "form-group")(
-            <.label(^.cls := "form-label")("Firstname:"),
-            <.input(^.cls := "form-control", ^.onChange ==> onChangeFirstname)
+            <.label(^.cls := "form-label")("Company name:"),
+            <.input(^.cls := "form-control", ^.onChange ==> onChangeName)
           )
         ),
         <.div(^.cls := "col-6 offset-3")(
           <.div(^.cls := "form-group")(
-            <.label(^.cls := "form-label")("Lastname:"),
-            <.input(^.cls := "form-control", ^.onChange ==> onChangeLastname)
+            <.label(^.cls := "form-label")("Email:"),
+            <.input(^.cls := "form-control", ^.onChange ==> onChangeEmail)
           )
         ),
         <.div(^.cls := "col-6 offset-3")(
           <.div(^.cls := "form-group")(
-            <.label(^.cls := "form-label")("Age:"),
-            <.input(^.cls := "form-control", ^.onChange ==> onChangeAge)
+            <.label(^.cls := "form-label")("Phone:"),
+            <.input(^.cls := "form-control", ^.onChange ==> onChangePhone)
+          )
+        ),
+        <.div(^.cls := "col-6 offset-3")(
+          <.div(^.cls := "form-group")(
+            <.label(^.cls := "form-label")("Workers count:"),
+            <.input(^.`type`:= "number", ^.cls := "form-control", ^.onChange ==> onChangeWorkersCount)
           )
         ),
         <.div(^.cls := "col-6 offset-3")(
           <.button(^.cls := "btn btn-success")("Submit", ^.onClick --> onSubmit)
         )
-      ).when(state.page == CreateUser)
+      ).when(state.page == CompanyForm)
 
-    def chatForm(implicit state: State): TagMod =
-      <.div(^.cls := "bggg")(
-        <.div(^.className := "chat",
-          <.div(^.className := "chat-title",
-            <.h1("가을❤"),
-            <.h2("qiutian"),
-            <.figure(^.className := "avatar",
-              <.img(^.src := "https://www.pikpng.com/pngl/b/109-1099794_ios-emoji-emoji-iphone-ios-heart-hearts-spin.png")
-            )
-          ),
-          <.div(^.className := "messages",
-            <.div(^.className := "messages-content")
-          ),
-          <.div(^.className := "message-box",
-            <.textarea(^.`type` := "text", ^.className := "message-input", ^.onChange ==> onChangeMessage, ^.placeholder := "Type message..."),
-            <.button(^.`type` := "submit", ^.className := "message-submit",^.onClick --> onSend,"Send")
-          )
-        ),
-        <.div(^.className := "bg")
-      ).when(state.page == ChatUI)
-
-    val Fake: Array[String] = Array(
-      "사랑해❤",
-      "지은 뿐이야",
-      "나 이거 만드느라 고생했어.",
-      "여보 뭐해?",
-      "휴 힘들다...",
-      "That's awesome",
-      "Codepen is a nice place to stay",
-      "I think you're a nice person",
-      "Why do you think that?",
-      "Can you explain?",
-      "Anyway I've gotta go now",
-      "It was a pleasure chat with you",
-      "Time to make a new codepen",
-      "Bye",
-      ":)"
-    )
-
-    def fakeMessage: String = {
-      Fake(scala.util.Random.nextInt(Fake.length))
-    }
-
-    def createRow(user: User): VdomTagOf[TableRow] =
+    def createRow(company: Company): VdomTagOf[TableRow] =
       <.tr(
-        <.td(user.firstname),
-        <.td(user.lastname),
-        <.td(user.email),
-        <.td(user.phone),
-        <.td(user.age)
+        <.td(company.name),
+        <.td(company.email),
+        <.td(company.phone),
+        <.td(company.workerCount)
       )
 
-    def createMessageRow(message: Message): VdomTagOf[TableRow] =
-      if (message.owner == Me) {
-        <.tr(
-          <.td(message.text),
-          <.td("Writing.....")
-        )
-      } else {
-        <.tr(
-          <.td("Writing....."),
-          <.td(message.text)
-        )
-      }
-
-
-    def userTable(implicit state: State): TagMod =
+    def companyTable(implicit state: State): TagMod =
       <.table(^.cls := "table table-bordered table-striped mt-5")(
-        <.thead(<.tr(<.th("First Name"), <.th("Last Name"), <.th("Email"), <.th("Phone"), <.th("Age"))),
-        <.tbody(state.users map createRow: _*)).when(state.page == UserDashboard)
-
-    def messageTable(implicit state: State): TagMod =
-      <.table(^.cls := "table table-bordered table-striped mt-5")(
-        <.thead(<.tr(<.th("Me"),<.th("You"))),
-        <.tbody(state.messages map createMessageRow: _*)).when(state.page == ChatUI)
+        <.thead(<.tr(<.th("Name"), <.th("Email"), <.th("Phone"), <.th("Workers count"))),
+        <.tbody(state.companies map createRow: _*)).when(state.page == CompanyDashboard)
 
 
     def render(implicit state: State): VdomTagOf[Div] =
-      <.div(^.cls := "container")(navbar, homePage, userForm, userTable, chatForm, messageTable)
+      <.div(^.cls := "container")(navbar, homePage, companyForm, companyTable)
   }
 
   val NavbarComponent: AppComponentType =

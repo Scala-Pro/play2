@@ -1,0 +1,37 @@
+@this(webJarsUtil: org.webjars.play.WebJarsUtil)
+@(role: String)
+@main("Denis Page", webJarsUtil) {
+<table style="color: white; border: 1px solid white;">
+    @if(role == "admin"){
+    <tr>
+        <th>№</th>
+        <th>Name</th>
+        <th>Group</th>
+        <th>Direction</th>
+        <th>Day</th>
+    </tr>
+
+    <tr>
+        <td>1</td>
+        <td>Denis</td>
+        <td>850</td>
+        <td>Scala</td>
+        <td>3</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Dilshod</td>
+        <td>851</td>
+        <td>Java</td>
+        <td>5</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Ogabek</td>
+        <td>852</td>
+        <td>Python</td>
+        <td>7</td>
+    </tr>
+    }
+</table>
+}

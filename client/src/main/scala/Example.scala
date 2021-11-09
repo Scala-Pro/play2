@@ -77,8 +77,7 @@ class Example extends AjaxImplicits {
 
     def createRow(user: User): VdomTagOf[TableRow] =
       <.tr(
-        <.td(user.firstname),
-        <.td(user.lastname),
+        <.td(user.fullName),
         <.td(user.email),
         <.td(user.phone),
         <.td(user.age)

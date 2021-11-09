@@ -1,12 +1,12 @@
 import Dependencies.Libraries._
-import Dependencies.{Versions, rootDependencies}
+import Dependencies.{Versions, commonDependencies, rootDependencies}
 
 lazy val projectSettings = scala.Seq(version := "1.0", scalaVersion := "2.13.6")
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("common"))
-  .settings(libraryDependencies ++= circeLibs)
+  .settings(libraryDependencies ++= commonDependencies)
   .settings(projectSettings: _*)
 
 lazy val client = (project in file("client"))
@@ -22,9 +22,11 @@ lazy val client = (project in file("client"))
       "com.github.japgolly.scalacss"      %%% "ext-react"     % Versions.scalaCssV,
       "io.circe"                          %%% "circe-core"    % Versions.circeVersion,
       "io.circe"                          %%% "circe-parser"  % Versions.circeVersion,
-      "io.circe"                          %%% "circe-generic" % Versions.circeVersion),
-    webpackEmitSourceMaps           := false,
-    Compile / npmDependencies ++= npmLibs)
+      "io.circe"                          %%% "circe-generic" % Versions.circeVersion,
+    ),
+    webpackEmitSourceMaps := false,
+    Compile / npmDependencies ++= npmLibs
+  )
   .enablePlugins(ScalaJSBundlerPlugin)
   .dependsOn(common.js)
 
@@ -40,7 +42,8 @@ lazy val server = project
     Compile / compile       := ((Compile / compile) dependsOn scalaJSPipeline).value,
     resolvers += Resolver.sonatypeRepo("snapshots"),
     scalacOptions ++= scala.Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-unchecked"),
-    libraryDependencies ++= rootDependencies ++ Seq(guice))
+    libraryDependencies ++= rootDependencies ++ Seq(guice)
+  )
   .enablePlugins(WebScalaJSBundlerPlugin, PlayScala)
 
 lazy val `play-example` = (project in file("."))
