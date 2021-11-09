@@ -24,6 +24,8 @@ class Navbar extends AjaxImplicits {
     page: Page = Home
   )
 
+
+
   class Backend($ : BackendScope[Unit, State]) {
 
     def changePage(selectedPage: Page): Callback =
