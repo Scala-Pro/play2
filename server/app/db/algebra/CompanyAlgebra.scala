@@ -1,9 +1,9 @@
 package db.algebra
 
 import cats.effect._
-import db.sql.CompanySql.insert
+import db.sql.CompanySql._
 import protocols.{Company, CompanyWithoutId}
-import skunk.Session
+import skunk._
 
 trait CompanyAlgebra[F[_]] {
   def create(company: CompanyWithoutId): F[Company]

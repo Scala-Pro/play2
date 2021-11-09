@@ -9,7 +9,6 @@ GET     /chatD                                       @controllers.HomeController
 GET     /game                                        @controllers.HomeController.game
 GET     /prizes                                      @controllers.HomeController.getPrizes
 GET     /create-user                                 @controllers.HomeController.createUser
-GET     /create-teacher                              @controllers.HomeController.createTeacher
 GET     /get-user                                    @controllers.HomeController.getUsers
 
 +nocsrf

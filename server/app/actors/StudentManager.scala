@@ -7,8 +7,8 @@ import akka.util.Timeout
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import com.typesafe.scalalogging.LazyLogging
-import db.domain.Common.{CreateTeacher, CreateUser}
-import db.domain.{Teacher, TeacherIdsiz, User, UserWithoutId}
+import db.domain.Common.CreateUser
+import db.domain.{User, UserWithoutId}
 import db.module.Database
 import play.api.{Configuration, Environment}
 import protocols.StudentProtocol.{GetStudents, Student}
@@ -41,9 +41,6 @@ class StudentManager @Inject()(
     case CreateUser(user) =>
       createUser(user).pipeTo(sender())
 
-    case CreateTeacher(teacher) =>
-      createTeacher(teacher).pipeTo(sender())
-
     case GetUsers =>
       getUsers.pipeTo(sender())
 
@@ -69,19 +66,8 @@ class StudentManager @Inject()(
     database.userAlgebra.flatMap(_.create(user)).unsafeToFuture()
   }
 
-  def createTeacher(teacher: TeacherIdsiz): Future[Teacher] = {
-    database.teacherAlgebra.flatMap(_.create(teacher)).unsafeToFuture()
-  }
-
   def getUsers: Future[List[User]] = {
     database.userAlgebra.flatMap(_.findAll).unsafeToFuture()
   }
-
-  def getTeachers: Future[List[Teacher]] = {
-    database.teacherAlgebra.flatMap(_.findAll).unsafeToFuture()
-  }
-
-
-
 
 }

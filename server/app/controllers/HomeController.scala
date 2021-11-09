@@ -5,8 +5,8 @@ import akka.pattern.ask
 import akka.util.Timeout
 import cats.implicits.catsSyntaxApplicativeError
 import com.typesafe.scalalogging.LazyLogging
-import db.domain.Common.{CreateTeacher, CreateUser}
-import db.domain.{Teacher, TeacherIdsiz, User, UserWithoutId}
+import db.domain.Common.CreateUser
+import db.domain.{User, UserWithoutId}
 import org.webjars.play.WebJarsUtil
 import play.api.Configuration
 import play.api.libs.functional.syntax._
@@ -62,8 +62,6 @@ class HomeController @Inject() (
 
   val user: UserWithoutId = UserWithoutId("Martin", "Odersky")
 
-  val teacher = TeacherIdsiz("teacher1")
-
   def index: Action[AnyContent] = Action(Ok(indexTemplate()))
 
   def surojiddin: Action[AnyContent] = Action(Ok(surojiddinTemplate()))
@@ -80,7 +78,6 @@ class HomeController @Inject() (
 
   implicit val userFormat: OFormat[User]   = Json.format[User]
   implicit val prizeFormat: OFormat[Prize] = Json.format[Prize]
-  implicit val teacherFormat: OFormat[Teacher] = Json.format[Teacher]
 
   def getStudents: Action[AnyContent] = Action.async {
     (studentManager ? GetStudents)
@@ -109,7 +106,7 @@ class HomeController @Inject() (
           BadRequest("Error")
         }
 
-  }
+  }}
 
   def getUsers: Action[AnyContent] = Action.async {
     (studentManager ? GetUsers).mapTo[List[User]].map { users =>
