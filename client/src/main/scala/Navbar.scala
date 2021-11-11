@@ -20,7 +20,7 @@ class Navbar extends AjaxImplicits {
     email: String = "",
     phone: String = "",
     workersCount: Int = 0,
-    companies: List[Company] =Nil,
+    companies: List[Company] = Nil,
     page: Page = Home
   )
 
@@ -82,6 +82,16 @@ class Navbar extends AjaxImplicits {
             Callback.alert("Successfully created")
         }.asCallback
     }
+
+
+    def getCompanies: Callback = {
+      get(Urls.GetCompany)
+        .fail(onError)
+        .done[List[Company]] { result =>
+            $.modState(s => s.copy(companies = result))
+        }.asCallback
+    }
+    getCompanies.runNow()
 
     def homePage(implicit state: State): TagMod =
       <.div("Home page.").when(state.page == Home)
